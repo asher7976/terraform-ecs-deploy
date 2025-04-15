@@ -56,7 +56,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_lb" "main" {
-  name               = "simpletimeservice-lb"
+  name               = "simpletimeservice-lb-new"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
