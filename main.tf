@@ -74,10 +74,10 @@ resource "aws_lb_target_group" "main" {
     path                = "/"
     protocol            = "HTTP"
     matcher             = "200"
-    interval            = 30
-    timeout             = 5
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
+    interval            = 30  # Time between each health check (in seconds)
+    timeout             = 5   # Time to wait for a health check response (in seconds)
+    healthy_threshold   = 2   # Number of successful checks before marking as healthy
+    unhealthy_threshold = 3   # Number of failed checks before marking as unhealthy
   }
 }
 
@@ -135,4 +135,8 @@ resource "aws_ecs_service" "main" {
   }
 
   depends_on = [aws_lb_listener.http]
+}
+
+output "load_balancer_url" {
+  value = aws_lb.main.dns_name
 }
