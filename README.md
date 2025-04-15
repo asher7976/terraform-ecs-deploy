@@ -69,11 +69,6 @@ cd terraform-ecs-deploy
     ```
 
 ## 📁 Project Structure
-
-
-plaintext
-
-
 .
 ├── main.tf              # Main infrastructure config: VPC, ECS, ALB, roles
 ├── variables.tf         # Input variables with descriptions and types
@@ -82,7 +77,7 @@ plaintext
 ├── providers.tf         # AWS provider config
 ├── .gitignore           # Ignore Terraform state & backups
 └── README.md            # Project documentation
-```
+
 
 ### Files:
 
