@@ -3,11 +3,20 @@ This project uses Terraform to deploy a containerized web application (Simple Ti
 
 ## 🚀 What This Project Does
 This project creates a secure, scalable infrastructure on AWS using Terraform and deploys a Docker image from Docker Hub (`79975/simple-timeservice:latest`) into ECS Fargate.
+# 🚀 Simple Time Service Deployment with Terraform on AWS ECS
 
-### Features:
-- Provisions networking (VPC, subnets, internet gateway, routing, security groups)
-- Deploys ECS Fargate service with an ALB for routing traffic
-- Exposes a simple web service that returns the current time
+> 📦 *Deploy a simple, containerized Flask app on AWS ECS using Terraform and Fargate.*
+
+---
+
+## 🌐 Application Overview
+
+### 🐍 Flask App
+
+A lightweight Python Flask application that returns:
+- ⏰ **Current UTC timestamp**
+- 🌍 **Client IP address**
+
 
 ## 📦 Prerequisites
 
@@ -59,16 +68,17 @@ cd terraform-ecs-deploy
 
 5. **Test the service:**
 
+   📡 Route: /
+   📤 Response
     Use the provided URL in your browser or with `curl`:
 
     curl http://simpletimeservice-lb-abc123.us-west-2.elb.amazonaws.com
-    
+
     Example Response:
     ```json
     { "current_time": "2025-04-15T12:45:33Z" }
     ```
 
-## 📁 Project Structure
 ## 📁 Project Structure
 
 ```plaintext
@@ -99,72 +109,19 @@ This command will remove:
 - Application Load Balancer (ALB)
 - VPC, subnets, and other networking resources
 
-INFRASTRUCUTURE
-1. Virtual Private Cloud (VPC)
-A VPC provides the network boundary for all your resources. It’s a logically isolated section of AWS that you define. Inside the VPC, you'll have:
 
-Subnets: The VPC will have one or more subnets (public and private). For this setup:
+Infrastructure with Terraform
+🛠 Provisioned Services:
 
-Public Subnet: Hosts the ALB (Application Load Balancer) which is internet-facing.
+🌐 VPC, Subnets
+🌍 Internet Gateway
+🔐 Security Groups
+🚦 Application Load Balancer (ALB)
+🧩 ECS Cluster
+📦 Task Definition
+🛡 ECS Service (Fargate)
+✅ Health Checks
 
-Private Subnet: Hosts the ECS Fargate tasks (your containers). These instances don't directly interact with the internet.
-
-Internet Gateway (IGW): Provides access to/from the internet for resources in the public subnet (e.g., ALB).
-
-Route Tables: Control the traffic routing inside the VPC and to/from the internet.
-
-2. ECS Cluster and Fargate Service
-Amazon ECS (Elastic Container Service) is a container orchestration service that runs and manages Docker containers. You are using ECS Fargate, which abstracts the underlying EC2 instances, so you don't need to manage servers directly.
-
-ECS Cluster: A logical grouping of resources (tasks, services) where your containerized application will run.
-
-ECS Fargate Task: Defines the container(s) that will run inside the ECS service. In your case, it’s a container running the 79975/simple-timeservice:latest image.
-
-ECS Fargate Service: Ensures that the required number of ECS tasks (containers) are running and manages load balancing.
-
-3. Application Load Balancer (ALB)
-The ALB is responsible for routing HTTP(S) traffic to your ECS tasks based on the incoming request. It's set up with:
-
-Listener: Listens for HTTP/HTTPS requests on the defined port (80 by default for HTTP).
-
-Target Group: Routes the incoming traffic to ECS tasks. The target group is linked to your ECS service, so the load balancer directs traffic to the appropriate containers.
-
-4. Security Groups
-Security groups act as virtual firewalls for your EC2 instances and resources to control inbound and outbound traffic:
-
-ALB Security Group: Allows inbound HTTP/HTTPS traffic (from the internet).
-
-ECS Task Security Group: Allows inbound traffic only from the ALB to ensure that containers are not publicly accessible but can be accessed via the ALB.
-
-5. IAM Roles and Policies
-IAM (Identity and Access Management) is used to define permissions for your resources:
-
-ECS Task Role: Allows the ECS tasks (your containers) to interact with other AWS services, such as pulling images from ECR or writing logs to CloudWatch.
-
-ECS Service Role: Grants ECS permission to manage resources on your behalf (e.g., creating and managing tasks).
-
-ALB Role: Manages permissions for the ALB to interact with ECS and forward traffic.
-
-6.Terraform Resources
-These Terraform resources and modules will be used to create the infrastructure:
-
-aws_vpc: Creates the VPC with specified CIDR blocks.
-
-aws_subnet: Creates the public and private subnets.
-
-aws_internet_gateway: Creates the internet gateway to allow internet traffic.
-
-aws_security_group: Defines rules for controlling access to the ECS tasks and ALB.
-
-aws_lb: The Application Load Balancer for routing HTTP(S) traffic.
-
-aws_lb_target_group: Associates the ECS tasks with the ALB.
-
-aws_ecs_cluster: The ECS cluster to run the Fargate tasks.
-
-aws_ecs_task_definition: Defines the Docker container and how it should run.
-
-aws_ecs_service: Manages the ECS tasks and ensures they run and scale.
 
 
 ## 🧠 Tips and Best Practices
