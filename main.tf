@@ -1,5 +1,3 @@
-
-
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
@@ -39,14 +37,38 @@ resource "aws_route_table_association" "public2" {
   route_table_id = aws_route_table.main.id
 }
 
+# ALB security group
 resource "aws_security_group" "alb_sg" {
-  vpc_id = aws_vpc.main.id
+  name        = "alb-sg"
+  description = "Allow HTTP from internet"
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# ECS security group
+resource "aws_security_group" "ecs_sg" {
+  name        = "ecs-sg"
+  description = "Allow traffic from ALB"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port       = 5000
+    to_port         = 5000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   egress {
@@ -66,20 +88,20 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "main" {
-  name         = "simpletimeservice-tg"
-  port         = 5000
-  protocol     = "HTTP"
-  vpc_id       = aws_vpc.main.id
-  target_type  = "ip"
+  name        = "simpletimeservice-tg"
+  port        = 5000
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = aws_vpc.main.id
 
   health_check {
     path                = "/"
     protocol            = "HTTP"
     matcher             = "200"
     interval            = 30
-    timeout             = 5
+    timeout             = 10
     healthy_threshold   = 2
-    unhealthy_threshold = 2
+    unhealthy_threshold = 3
   }
 }
 
@@ -102,19 +124,23 @@ resource "aws_ecs_task_definition" "main" {
   family                   = "simpletimeservice-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "512"  # 0.5 vCPU
-  memory                   = "2048" # 2 GB of memory
+  cpu                      = "512"
+  memory                   = "1024"
 
-  container_definitions = jsonencode([{
-    name      = "simpletimeservice-container"
-    image     = "79975/simple-timeservice:latest"
-    essential = true
-    portMappings = [{
-      containerPort = 5000
-      hostPort      = 5000
-      protocol      = "tcp"
-    }]
-  }])
+  container_definitions = jsonencode([
+    {
+      name      = "simpletimeservice-container"
+      image     = "79975/simple-timeservice:latest"
+      essential = true
+      portMappings = [
+        {
+          containerPort = 5000
+          hostPort      = 5000
+          protocol      = "tcp"
+        }
+      ]
+    }
+  ])
 }
 
 resource "aws_ecs_service" "main" {
@@ -125,9 +151,9 @@ resource "aws_ecs_service" "main" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = [aws_subnet.public1.id, aws_subnet.public2.id]
+    subnets          = [aws_subnet.public1.id, aws_subnet.public2.id]
     assign_public_ip = true
-    security_groups = [aws_security_group.alb_sg.id]
+    security_groups  = [aws_security_group.ecs_sg.id]
   }
 
   load_balancer {
