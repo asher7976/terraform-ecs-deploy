@@ -137,6 +137,4 @@ resource "aws_ecs_service" "main" {
   depends_on = [aws_lb_listener.http]
 }
 
-output "load_balancer_url" {
-  value = aws_lb.main.dns_name
-}
+
