@@ -1,3 +1,7 @@
+provider "aws" {
+  region = var.aws_region
+}
+
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
@@ -74,10 +78,10 @@ resource "aws_lb_target_group" "main" {
     path                = "/"
     protocol            = "HTTP"
     matcher             = "200"
-    interval            = 30  # Time between each health check (in seconds)
-    timeout             = 5   # Time to wait for a health check response (in seconds)
-    healthy_threshold   = 2   # Number of successful checks before marking as healthy
-    unhealthy_threshold = 3   # Number of failed checks before marking as unhealthy
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
   }
 }
 
@@ -100,8 +104,8 @@ resource "aws_ecs_task_definition" "main" {
   family                   = "simpletimeservice-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"  # 0.5 vCPU
+  memory                   = "2048" # 2 GB of memory
 
   container_definitions = jsonencode([{
     name      = "simpletimeservice-container"
@@ -136,5 +140,3 @@ resource "aws_ecs_service" "main" {
 
   depends_on = [aws_lb_listener.http]
 }
-
-
