@@ -69,7 +69,10 @@ Follow these steps to deploy the Simple Time Service:
 
 ## 📁 Project Structure
 
+
 plaintext
+
+
 .
 ├── main.tf              # Main infrastructure config: VPC, ECS, ALB, roles
 ├── variables.tf         # Input variables with descriptions and types
