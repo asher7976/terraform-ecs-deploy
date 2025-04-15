@@ -51,7 +51,7 @@ cd terraform-ecs-deploy
     
 3. **Apply the Terraform configuration:**
 
-    terraform apply    note( you type "yes" to apply the configuration here) 
+    terraform apply              note( you type "yes" to apply the configuration here) 
     After successful deployment, Terraform will output the following (example):
    
     load_balancer_url = "http://simpletimeservice-lb-abc123.us-west-2.elb.amazonaws.com"
