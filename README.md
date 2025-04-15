@@ -40,6 +40,7 @@ Follow these steps to deploy the Simple Time Service:
 
 first clone this repo into ur local machine using the url:
   https://github.com/asher7976/terraform-ecs-deploy.git
+
 cd terraform-ecs-deploy
 
 1. **Initialize Terraform:**
