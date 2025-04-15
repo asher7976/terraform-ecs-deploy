@@ -38,25 +38,25 @@ You'll be prompted to enter:
 
 Follow these steps to deploy the Simple Time Service:
 
+first clone this repo into ur local machine using the url:
+  https://github.com/asher7976/terraform-ecs-deploy.git
+cd terraform-ecs-deploy
+
 1. **Initialize Terraform:**
-
-    terraform init
+     terraform init
   
-
 2. **Review the plan:**
-
-    terraform plan 
+     terraform plan 
     
-
 3. **Apply the Terraform configuration:**
 
-    terraform apply     you type "yes" to apply the configuration here 
+    terraform apply    note( you type "yes" to apply the configuration here) 
     After successful deployment, Terraform will output the following (example):
-
+   
     load_balancer_url = "http://simpletimeservice-lb-abc123.us-west-2.elb.amazonaws.com"
     
 
-4. **Test the service:**
+5. **Test the service:**
 
     Use the provided URL in your browser or with `curl`:
 
